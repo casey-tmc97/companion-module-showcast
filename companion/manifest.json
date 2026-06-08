@@ -1,0 +1,17 @@
+{
+  "id": "showcast",
+  "name": "ShowCast",
+  "shortname": "ShowCast",
+  "description": "Control ShowCast presentation software via TCP",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "casey-tmc97",
+  "bugs": "https://github.com/casey-tmc97/companion-module-showcast/issues",
+  "repository": "https://github.com/casey-tmc97/companion-module-showcast",
+  "category": "presentation",
+  "deprecated": false,
+  "runtime": {
+    "type": "node22",
+    "universal": "dist/main.js"
+  }
+}
