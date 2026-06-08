@@ -1,17 +1,18 @@
-import { InstanceBase, InstanceStatus, runEntrypoint, SomeCompanionConfigField } from '@companion-module/base'
-import { ShowCastConnection } from './connection'
-import { getActions } from './actions'
-import { getFeedbacks } from './feedbacks'
-import { getVariableDefinitions, buildVariableValues } from './variables'
-import type { ShowCastConfig, ShowCastState } from './types'
+import { InstanceBase, InstanceStatus, SomeCompanionConfigField } from '@companion-module/base'
+import type { JsonObject } from '@companion-module/base'
+import { ShowCastConnection } from './connection.js'
+import { getActions } from './actions.js'
+import { getFeedbacks } from './feedbacks.js'
+import { getVariableDefinitions, buildVariableValues } from './variables.js'
+import type { ShowCastConfig, ShowCastState } from './types.js'
 
-class ShowCastInstance extends InstanceBase<ShowCastConfig> {
+class ShowCastInstance extends InstanceBase {
   state: ShowCastState | null = null
   private connection: ShowCastConnection | null = null
 
-  async init(config: ShowCastConfig, _isFirstInit: boolean): Promise<void> {
+  async init(config: JsonObject, _isFirstInit: boolean, _secrets: unknown): Promise<void> {
     this.setVariableDefinitions(getVariableDefinitions())
-    await this.configUpdated(config)
+    await this.configUpdated(config, _secrets)
   }
 
   async destroy(): Promise<void> {
@@ -19,13 +20,14 @@ class ShowCastInstance extends InstanceBase<ShowCastConfig> {
     this.connection = null
   }
 
-  async configUpdated(config: ShowCastConfig): Promise<void> {
+  async configUpdated(config: JsonObject, _secrets: unknown): Promise<void> {
+    const cfg = config as unknown as ShowCastConfig
     this.connection?.destroy()
 
     this.connection = new ShowCastConnection(
-      config.host ?? '127.0.0.1',
-      config.port ?? 5100,
-      config.password ?? '',
+      cfg.host ?? '127.0.0.1',
+      cfg.port ?? 5100,
+      cfg.password ?? '',
     )
 
     this.connection.on('connected', () => {
@@ -40,12 +42,20 @@ class ShowCastInstance extends InstanceBase<ShowCastConfig> {
       this.updateStatus(InstanceStatus.Connecting, 'Reconnecting...')
     })
 
+    this.connection.on('commandError', (cmd: string, message: string) => {
+      this.log('warn', `Command "${cmd}" failed: ${message}`)
+    })
+
+    this.connection.on('commandOk', (cmd: string) => {
+      this.log('info', `Command "${cmd}" OK`)
+    })
+
     this.connection.on('stateUpdate', (state: ShowCastState) => {
       this.state = state
       this.setVariableValues(buildVariableValues(state))
       this.setActionDefinitions(getActions(this))
       this.setFeedbackDefinitions(getFeedbacks(this))
-      this.checkFeedbacks()
+      this.checkAllFeedbacks()
       this.updateStatus(InstanceStatus.Ok)
     })
 
@@ -83,8 +93,9 @@ class ShowCastInstance extends InstanceBase<ShowCastConfig> {
   }
 
   sendCommand(cmd: object): void {
-    this.connection?.sendCommand(cmd)
+    const sent = this.connection?.sendCommand(cmd)
+    if (!sent) this.log('warn', `sendCommand: socket not connected (${(cmd as any).type})`)
   }
 }
 
-runEntrypoint(ShowCastInstance, [])
+export default ShowCastInstance

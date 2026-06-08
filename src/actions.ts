@@ -1,5 +1,5 @@
 import { CompanionActionDefinitions } from '@companion-module/base'
-import type { ShowCastState } from './types'
+import type { ShowCastState } from './types.js'
 
 interface ActionInstance {
   state: ShowCastState | null

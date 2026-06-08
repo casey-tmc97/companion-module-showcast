@@ -1,17 +1,17 @@
-import { CompanionVariableDefinition, CompanionVariableValues } from '@companion-module/base'
-import type { ShowCastState } from './types'
+import { CompanionVariableDefinitions, CompanionVariableValues } from '@companion-module/base'
+import type { ShowCastState } from './types.js'
 
-export function getVariableDefinitions(): CompanionVariableDefinition[] {
-  return [
-    { variableId: 'live_page_name',       name: 'Live Page Name' },
-    { variableId: 'live_page_id',         name: 'Live Page ID (UUID)' },
-    { variableId: 'rundown_position',     name: 'Rundown Position (1-based)' },
-    { variableId: 'rundown_total',        name: 'Rundown Total Items' },
-    { variableId: 'rundown_current_name', name: 'Rundown Current Item Name' },
-    { variableId: 'audio_track_name',     name: 'Audio Track Name' },
-    { variableId: 'audio_playing',        name: 'Audio Playing (true/false)' },
-    { variableId: 'scheduler_running',    name: 'Scheduler Running (true/false)' },
-  ]
+export function getVariableDefinitions(): CompanionVariableDefinitions {
+  return {
+    live_page_name:       { name: 'Live Page Name' },
+    live_page_id:         { name: 'Live Page ID (UUID)' },
+    rundown_position:     { name: 'Rundown Position (1-based)' },
+    rundown_total:        { name: 'Rundown Total Items' },
+    rundown_current_name: { name: 'Rundown Current Item Name' },
+    audio_track_name:     { name: 'Audio Track Name' },
+    audio_playing:        { name: 'Audio Playing (true/false)' },
+    scheduler_running:    { name: 'Scheduler Running (true/false)' },
+  }
 }
 
 export function buildVariableValues(state: ShowCastState): CompanionVariableValues {

@@ -1,5 +1,5 @@
 import { combineRgb, CompanionFeedbackDefinitions } from '@companion-module/base'
-import type { ShowCastState } from './types'
+import type { ShowCastState } from './types.js'
 
 interface FeedbackInstance {
   state: ShowCastState | null

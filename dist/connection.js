@@ -58,7 +58,9 @@ export class ShowCastConnection extends EventEmitter {
     sendCommand(cmd) {
         if (this.socket && !this.socket.destroyed) {
             this.socket.write(JSON.stringify(cmd) + '\n');
+            return true;
         }
+        return false;
     }
     _processLine(line) {
         let msg;
@@ -74,6 +76,15 @@ export class ShowCastConnection extends EventEmitter {
         }
         else if (msg.type === 'state') {
             this.emit('stateUpdate', msg);
+        }
+        else if (msg.type === 'ack') {
+            const ack = msg;
+            if (ack.status === 'error') {
+                this.emit('commandError', ack.cmd, ack.message ?? 'Unknown error');
+            }
+            else {
+                this.emit('commandOk', ack.cmd);
+            }
         }
     }
     _scheduleReconnect() {

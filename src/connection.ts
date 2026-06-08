@@ -63,10 +63,12 @@ export class ShowCastConnection extends EventEmitter {
     this.socket = null
   }
 
-  sendCommand(cmd: object): void {
+  sendCommand(cmd: object): boolean {
     if (this.socket && !this.socket.destroyed) {
       this.socket.write(JSON.stringify(cmd) + '\n')
+      return true
     }
+    return false
   }
 
   private _processLine(line: string): void {
@@ -82,6 +84,13 @@ export class ShowCastConnection extends EventEmitter {
       this.destroy()
     } else if (msg.type === 'state') {
       this.emit('stateUpdate', msg as unknown as ShowCastState)
+    } else if (msg.type === 'ack') {
+      const ack = msg as unknown as { type: string; cmd: string; status: string; message?: string }
+      if (ack.status === 'error') {
+        this.emit('commandError', ack.cmd, ack.message ?? 'Unknown error')
+      } else {
+        this.emit('commandOk', ack.cmd)
+      }
     }
   }
 
