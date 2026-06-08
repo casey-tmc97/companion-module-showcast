@@ -14,7 +14,7 @@ function makeState(overrides: Partial<ShowCastState> = {}): ShowCastState {
 
 describe('getVariableDefinitions', () => {
   test('exports definitions for all 8 variables', () => {
-    const ids = getVariableDefinitions().map((v) => v.variableId)
+    const ids = Object.keys(getVariableDefinitions())
     expect(ids).toEqual(expect.arrayContaining([
       'live_page_name', 'live_page_id',
       'rundown_position', 'rundown_total', 'rundown_current_name',

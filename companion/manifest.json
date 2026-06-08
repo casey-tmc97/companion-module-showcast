@@ -1,4 +1,5 @@
 {
+  "type": "connection",
   "id": "showcast",
   "name": "ShowCast",
   "shortname": "ShowCast",
