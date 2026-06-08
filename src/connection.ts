@@ -1,13 +1,13 @@
 import { EventEmitter } from 'events'
 import * as net from 'net'
-import type { ShowCastState } from './types'
+import type { ShowCastState } from './types.js'
 
 export class ShowCastConnection extends EventEmitter {
   private socket: net.Socket | null = null
   private lineBuffer = ''
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null
   private reconnectDelay = 1000
-  private readonly MAX_RECONNECT_DELAY = 30000
+  private readonly MAX_RECONNECT_DELAY = 5000
   private _destroyed = false
 
   constructor(
