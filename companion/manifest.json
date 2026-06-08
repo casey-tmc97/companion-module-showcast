@@ -5,13 +5,22 @@
   "description": "Control ShowCast presentation software via TCP",
   "version": "1.0.0",
   "license": "MIT",
-  "author": "casey-tmc97",
-  "bugs": "https://github.com/casey-tmc97/companion-module-showcast/issues",
   "repository": "https://github.com/casey-tmc97/companion-module-showcast",
-  "category": "presentation",
-  "deprecated": false,
+  "bugs": "https://github.com/casey-tmc97/companion-module-showcast/issues",
+  "maintainers": [
+    {
+      "name": "casey-tmc97",
+      "github": "casey-tmc97"
+    }
+  ],
+  "legacyIds": [],
+  "manufacturer": "Texas Music Cafe",
+  "products": ["ShowCast"],
+  "keywords": ["presentation", "live", "showcast"],
   "runtime": {
     "type": "node22",
-    "universal": "dist/main.js"
+    "api": "nodejs-ipc",
+    "apiVersion": "1.14.1",
+    "entrypoint": "dist/main.js"
   }
 }
