@@ -77,9 +77,7 @@ export class ShowCastConnection extends EventEmitter {
       return
     }
 
-    if (msg.type === 'auth_ok') {
-      this.sendCommand({ type: 'get_state' })
-    } else if (msg.type === 'auth_fail') {
+    if (msg.type === 'auth_fail') {
       this.emit('authFailed')
       this.destroy()
     } else if (msg.type === 'state') {
