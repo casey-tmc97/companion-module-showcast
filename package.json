@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
+    "package": "companion-module-build",
     "test": "jest",
     "lint": "eslint src --ext .ts"
   },
@@ -13,6 +14,7 @@
     "@companion-module/base": "^1.7.0"
   },
   "devDependencies": {
+    "@companion-module/tools": "^2.7.2",
     "@types/jest": "^29.0.0",
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",

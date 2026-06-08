@@ -3,7 +3,7 @@
   "name": "ShowCast",
   "shortname": "ShowCast",
   "description": "Control ShowCast presentation software via TCP",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "license": "MIT",
   "repository": "https://github.com/casey-tmc97/companion-module-showcast",
   "bugs": "https://github.com/casey-tmc97/companion-module-showcast/issues",
@@ -20,7 +20,7 @@
   "runtime": {
     "type": "node22",
     "api": "nodejs-ipc",
-    "apiVersion": "1.14.1",
-    "entrypoint": "dist/main.js"
+    "apiVersion": "0.0.0",
+    "entrypoint": "../dist/main.js"
   }
 }
