@@ -31,18 +31,6 @@ export function getFeedbacks(instance: FeedbackInstance): CompanionFeedbackDefin
       callback: () => instance.state?.audio.playing === true,
     },
 
-    scheduler_is_running: {
-      type: 'boolean',
-      name: 'Scheduler Running',
-      description: 'Active when the ShowCast scheduler is running',
-      defaultStyle: {
-        bgcolor: combineRgb(0, 100, 200),
-        color: combineRgb(255, 255, 255),
-      },
-      options: [],
-      callback: () => instance.state?.scheduler.running === true,
-    },
-
     output_is_blanked: {
       type: 'boolean',
       name: 'Output Blanked',

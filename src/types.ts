@@ -26,15 +26,10 @@ export interface ShowCastRundown {
   currentName: string
 }
 
-export interface ShowCastScheduler {
-  running: boolean
-}
-
 export interface ShowCastState {
   page: ShowCastPage | null
   rundown: ShowCastRundown
   audio: ShowCastAudio
-  scheduler: ShowCastScheduler
   outputs: ShowCastOutput[]
 }
 

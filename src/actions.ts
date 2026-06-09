@@ -110,20 +110,6 @@ export function getActions(instance: ActionInstance): CompanionActionDefinitions
       callback: async () => instance.sendCommand({ type: 'audio_stop' }),
     },
 
-    scheduler_start: {
-      name: 'Scheduler: Start',
-      description: 'Activates the ShowCast scheduler so content runs automatically at pre-programmed times. Use to hand off control from manual operation to timed automation.',
-      options: [],
-      callback: async () => instance.sendCommand({ type: 'scheduler_start' }),
-    },
-
-    scheduler_stop: {
-      name: 'Scheduler: Stop',
-      description: 'Disables the scheduler and stops automated content progression. Use to take back manual control or override a running schedule.',
-      options: [],
-      callback: async () => instance.sendCommand({ type: 'scheduler_stop' }),
-    },
-
     output_blank: {
       name: 'Output: Blank',
       description: 'Blacks out a specific output while preserving its current page, so it can be restored with Unblank. Use for per-screen kill switches in multi-display setups.',

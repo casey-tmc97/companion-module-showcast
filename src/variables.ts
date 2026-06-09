@@ -10,7 +10,6 @@ export function getVariableDefinitions(): CompanionVariableDefinitions {
     rundown_current_name: { name: 'Rundown Current Item Name' },
     audio_track_name:     { name: 'Audio Track Name' },
     audio_playing:        { name: 'Audio Playing (true/false)' },
-    scheduler_running:    { name: 'Scheduler Running (true/false)' },
   }
 }
 
@@ -23,6 +22,5 @@ export function buildVariableValues(state: ShowCastState): CompanionVariableValu
     rundown_current_name: state.rundown.currentName,
     audio_track_name:     state.audio.trackName,
     audio_playing:        String(state.audio.playing),
-    scheduler_running:    String(state.scheduler.running),
   }
 }
