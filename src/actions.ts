@@ -24,9 +24,24 @@ export function getActions(instance: ActionInstance): CompanionActionDefinitions
     },
 
     page_clear: {
-      name: 'Clear Live',
+      name: 'Clear All',
       options: [],
       callback: async () => instance.sendCommand({ type: 'page_clear' }),
+    },
+
+    output_clear: {
+      name: 'Clear Output',
+      options: [
+        {
+          type: 'dropdown',
+          id: 'outputId',
+          label: 'Output',
+          default: '',
+          choices: outputChoices,
+        },
+      ],
+      callback: async (action) =>
+        instance.sendCommand({ type: 'output_clear', outputId: action.options['outputId'] as string }),
     },
 
     page_live: {
