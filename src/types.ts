@@ -31,6 +31,7 @@ export interface ShowCastState {
   rundown: ShowCastRundown
   audio: ShowCastAudio
   outputs: ShowCastOutput[]
+  selectedOutputName: string
 }
 
 export interface ShowCastConfig {
