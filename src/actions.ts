@@ -25,12 +25,14 @@ export function getActions(instance: ActionInstance): CompanionActionDefinitions
 
     page_clear: {
       name: 'Clear All',
+      description: 'Removes live content from every output simultaneously, leaving all displays blank.',
       options: [],
       callback: async () => instance.sendCommand({ type: 'page_clear' }),
     },
 
     output_clear: {
       name: 'Clear Output',
+      description: 'Removes live content from a single selected output without affecting other outputs.',
       options: [
         {
           type: 'dropdown',
