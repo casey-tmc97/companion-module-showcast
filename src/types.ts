@@ -17,7 +17,15 @@ export interface ShowCastOutput {
 export interface ShowCastAudio {
   playing: boolean
   trackName: string
+  positionMs: number
+  durationMs: number
   playlists: ShowCastPlaylist[]
+}
+
+export interface ShowCastVideo {
+  playing: boolean
+  positionMs: number
+  durationMs: number
 }
 
 export interface ShowCastRundown {
@@ -30,6 +38,7 @@ export interface ShowCastState {
   page: ShowCastPage | null
   rundown: ShowCastRundown
   audio: ShowCastAudio
+  video: ShowCastVideo
   outputs: ShowCastOutput[]
   selectedOutputName: string
 }
