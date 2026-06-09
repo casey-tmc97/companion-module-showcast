@@ -13,12 +13,14 @@ export function getActions(instance: ActionInstance): CompanionActionDefinitions
   return {
     page_advance: {
       name: 'Go Live & Advance',
+      description: 'Sends the current queued page to the live display, then advances the queue to the next page. Primary action for stepping through content during a service or presentation.',
       options: [],
       callback: async () => instance.sendCommand({ type: 'page_advance' }),
     },
 
     page_back: {
       name: 'Page Back',
+      description: 'Steps the queue backward one page without taking anything live. Use to back up after advancing too far.',
       options: [],
       callback: async () => instance.sendCommand({ type: 'page_back' }),
     },
@@ -48,6 +50,7 @@ export function getActions(instance: ActionInstance): CompanionActionDefinitions
 
     page_live: {
       name: 'Go Live: Specific Page',
+      description: 'Takes a specific page live immediately by its UUID, bypassing the normal queue order. Use for dedicated shortcut buttons that always jump to a known page.',
       options: [
         {
           type: 'textinput',
@@ -62,12 +65,14 @@ export function getActions(instance: ActionInstance): CompanionActionDefinitions
 
     rundown_next: {
       name: 'Rundown: Next',
+      description: 'Advances to the next item in the rundown. Use to step through the order of service — songs, segments, announcements.',
       options: [],
       callback: async () => instance.sendCommand({ type: 'rundown_next' }),
     },
 
     rundown_goto: {
       name: 'Rundown: Go To Index',
+      description: 'Jumps the rundown to a specific position by index (0-based). Use for dedicated buttons that skip directly to a known segment.',
       options: [
         {
           type: 'number',
@@ -84,6 +89,7 @@ export function getActions(instance: ActionInstance): CompanionActionDefinitions
 
     audio_play: {
       name: 'Audio: Play Playlist',
+      description: 'Starts playback of a selected playlist. Use for pre-service background music, countdown audio, or transitional music between segments.',
       options: [
         {
           type: 'dropdown',
@@ -99,24 +105,28 @@ export function getActions(instance: ActionInstance): CompanionActionDefinitions
 
     audio_stop: {
       name: 'Audio: Stop All',
+      description: 'Immediately stops all audio playback. Use as an emergency stop or to cut music when the service begins.',
       options: [],
       callback: async () => instance.sendCommand({ type: 'audio_stop' }),
     },
 
     scheduler_start: {
       name: 'Scheduler: Start',
+      description: 'Activates the ShowCast scheduler so content runs automatically at pre-programmed times. Use to hand off control from manual operation to timed automation.',
       options: [],
       callback: async () => instance.sendCommand({ type: 'scheduler_start' }),
     },
 
     scheduler_stop: {
       name: 'Scheduler: Stop',
+      description: 'Disables the scheduler and stops automated content progression. Use to take back manual control or override a running schedule.',
       options: [],
       callback: async () => instance.sendCommand({ type: 'scheduler_stop' }),
     },
 
     output_blank: {
       name: 'Output: Blank',
+      description: 'Blacks out a specific output while preserving its current page, so it can be restored with Unblank. Use for per-screen kill switches in multi-display setups.',
       options: [
         {
           type: 'dropdown',
@@ -132,6 +142,7 @@ export function getActions(instance: ActionInstance): CompanionActionDefinitions
 
     output_unblank: {
       name: 'Output: Unblank',
+      description: 'Restores a blanked output to show its previously live content. Pair with Output: Blank on a toggle button for a per-screen confidence monitor kill switch.',
       options: [
         {
           type: 'dropdown',
@@ -147,6 +158,7 @@ export function getActions(instance: ActionInstance): CompanionActionDefinitions
 
     get_state: {
       name: 'Refresh State',
+      description: 'Manually requests a fresh state snapshot from ShowCast. State is normally pushed automatically — use this as a diagnostic fallback if variables or feedbacks appear stale.',
       options: [],
       callback: async () => instance.sendCommand({ type: 'get_state' }),
     },
