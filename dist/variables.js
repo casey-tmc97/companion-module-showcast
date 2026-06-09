@@ -7,10 +7,25 @@ export function getVariableDefinitions() {
         rundown_current_name: { name: 'Rundown Current Item Name' },
         audio_track_name: { name: 'Audio Track Name' },
         audio_playing: { name: 'Audio Playing (true/false)' },
-        scheduler_running: { name: 'Scheduler Running (true/false)' },
+        audio_position: { name: 'Audio Position (M:SS)' },
+        audio_duration: { name: 'Audio Duration (M:SS)' },
+        audio_remaining: { name: 'Audio Remaining (M:SS)' },
+        video_playing: { name: 'Video Playing (true/false)' },
+        video_position: { name: 'Video Position (M:SS)' },
+        video_duration: { name: 'Video Duration (M:SS)' },
+        video_remaining: { name: 'Video Remaining (M:SS)' },
+        selected_output_name: { name: 'Selected Output Name' },
     };
 }
+function fmtMs(ms) {
+    const totalSec = Math.floor(ms / 1000);
+    const m = Math.floor(totalSec / 60);
+    const s = totalSec % 60;
+    return `${m}:${String(s).padStart(2, '0')}`;
+}
 export function buildVariableValues(state) {
+    const audioRemMs = Math.max(0, state.audio.durationMs - state.audio.positionMs);
+    const videoRemMs = Math.max(0, state.video.durationMs - state.video.positionMs);
     return {
         live_page_name: state.page?.name ?? '',
         live_page_id: state.page?.id ?? '',
@@ -19,6 +34,13 @@ export function buildVariableValues(state) {
         rundown_current_name: state.rundown.currentName,
         audio_track_name: state.audio.trackName,
         audio_playing: String(state.audio.playing),
-        scheduler_running: String(state.scheduler.running),
+        audio_position: fmtMs(state.audio.positionMs),
+        audio_duration: fmtMs(state.audio.durationMs),
+        audio_remaining: fmtMs(audioRemMs),
+        video_playing: String(state.video.playing),
+        video_position: fmtMs(state.video.positionMs),
+        video_duration: fmtMs(state.video.durationMs),
+        video_remaining: fmtMs(videoRemMs),
+        selected_output_name: state.selectedOutputName,
     };
 }
