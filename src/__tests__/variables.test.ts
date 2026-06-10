@@ -5,23 +5,25 @@ function makeState(overrides: Partial<ShowCastState> = {}): ShowCastState {
   return {
     page: null,
     rundown: { pos: 0, total: 5, currentName: 'Opener' },
-    audio: { playing: false, trackName: '', playlists: [] },
-    scheduler: { running: false },
+    audio: { playing: false, trackName: '', positionMs: 0, durationMs: 0, playlists: [] },
+    video: { playing: false, trackName: '', positionMs: 0, durationMs: 0 },
     outputs: [],
+    selectedOutputName: '',
     ...overrides,
   }
 }
 
 describe('getVariableDefinitions', () => {
-  test('exports definitions for all 8 variables', () => {
+  test('exports definitions for all expected variables', () => {
     const ids = Object.keys(getVariableDefinitions())
     expect(ids).toEqual(expect.arrayContaining([
       'live_page_name', 'live_page_id',
       'rundown_position', 'rundown_total', 'rundown_current_name',
-      'audio_track_name', 'audio_playing',
-      'scheduler_running',
+      'audio_track_name', 'audio_playing', 'audio_position', 'audio_duration', 'audio_remaining',
+      'video_track_name', 'video_playing', 'video_position', 'video_duration', 'video_remaining',
+      'selected_output_name',
     ]))
-    expect(ids).toHaveLength(8)
+    expect(ids).toHaveLength(16)
   })
 })
 
@@ -58,7 +60,7 @@ describe('buildVariableValues', () => {
   })
 
   test('audio_playing is "true" when playing', () => {
-    const state = makeState({ audio: { playing: true, trackName: 'Song', playlists: [] } })
+    const state = makeState({ audio: { playing: true, trackName: 'Song', positionMs: 0, durationMs: 0, playlists: [] } })
     expect(buildVariableValues(state).audio_playing).toBe('true')
   })
 
@@ -66,17 +68,47 @@ describe('buildVariableValues', () => {
     expect(buildVariableValues(makeState()).audio_playing).toBe('false')
   })
 
-  test('audio_track_name is track name when playing', () => {
-    const state = makeState({ audio: { playing: true, trackName: 'Amazing Grace', playlists: [] } })
+  test('audio_track_name matches state', () => {
+    const state = makeState({ audio: { playing: true, trackName: 'Amazing Grace', positionMs: 0, durationMs: 0, playlists: [] } })
     expect(buildVariableValues(state).audio_track_name).toBe('Amazing Grace')
   })
 
-  test('scheduler_running is "true" when running', () => {
-    const state = makeState({ scheduler: { running: true } })
-    expect(buildVariableValues(state).scheduler_running).toBe('true')
+  test('audio_position formats M:SS', () => {
+    const state = makeState({ audio: { playing: true, trackName: '', positionMs: 75000, durationMs: 180000, playlists: [] } })
+    expect(buildVariableValues(state).audio_position).toBe('1:15')
   })
 
-  test('scheduler_running is "false" when not running', () => {
-    expect(buildVariableValues(makeState()).scheduler_running).toBe('false')
+  test('audio_remaining clamps to zero', () => {
+    const state = makeState({ audio: { playing: false, trackName: '', positionMs: 0, durationMs: 0, playlists: [] } })
+    expect(buildVariableValues(state).audio_remaining).toBe('0:00')
+  })
+
+  test('video_track_name matches state', () => {
+    const state = makeState({ video: { playing: true, trackName: 'Countdown', positionMs: 0, durationMs: 10000 } })
+    expect(buildVariableValues(state).video_track_name).toBe('Countdown')
+  })
+
+  test('video_playing is "true" when playing', () => {
+    const state = makeState({ video: { playing: true, trackName: '', positionMs: 0, durationMs: 10000 } })
+    expect(buildVariableValues(state).video_playing).toBe('true')
+  })
+
+  test('video_playing is "false" when not playing', () => {
+    expect(buildVariableValues(makeState()).video_playing).toBe('false')
+  })
+
+  test('video_position formats M:SS', () => {
+    const state = makeState({ video: { playing: true, trackName: '', positionMs: 90000, durationMs: 120000 } })
+    expect(buildVariableValues(state).video_position).toBe('1:30')
+  })
+
+  test('video_remaining clamps to zero', () => {
+    const state = makeState({ video: { playing: false, trackName: '', positionMs: 0, durationMs: 0 } })
+    expect(buildVariableValues(state).video_remaining).toBe('0:00')
+  })
+
+  test('selected_output_name matches state', () => {
+    const state = makeState({ selectedOutputName: 'Main Output' })
+    expect(buildVariableValues(state).selected_output_name).toBe('Main Output')
   })
 })

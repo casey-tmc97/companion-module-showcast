@@ -12,6 +12,30 @@ export function getFeedbacks(instance) {
             options: [],
             callback: () => instance.state?.page !== null && instance.state?.page !== undefined,
         },
+        page_name_is_live: {
+            type: 'boolean',
+            name: 'Specific Page Is Live',
+            description: 'Active when the specified page is currently live on the selected output (match by name or UUID)',
+            defaultStyle: {
+                bgcolor: combineRgb(0, 180, 0),
+                color: combineRgb(255, 255, 255),
+            },
+            options: [
+                {
+                    type: 'textinput',
+                    id: 'pageName',
+                    label: 'Page Name or UUID',
+                    default: '',
+                },
+            ],
+            callback: (feedback) => {
+                const input = feedback.options['pageName'].trim().toLowerCase();
+                const page = instance.state?.page;
+                if (!page)
+                    return false;
+                return page.name.toLowerCase() === input || page.id.toLowerCase() === input;
+            },
+        },
         audio_is_playing: {
             type: 'boolean',
             name: 'Audio Playing',
@@ -23,6 +47,17 @@ export function getFeedbacks(instance) {
             options: [],
             callback: () => instance.state?.audio.playing === true,
         },
+        video_is_playing: {
+            type: 'boolean',
+            name: 'Video Playing',
+            description: 'Active when a video is currently playing on the selected output',
+            defaultStyle: {
+                bgcolor: combineRgb(0, 180, 0),
+                color: combineRgb(255, 255, 255),
+            },
+            options: [],
+            callback: () => instance.state?.video.playing === true,
+        },
         output_is_blanked: {
             type: 'boolean',
             name: 'Output Blanked',
@@ -33,16 +68,15 @@ export function getFeedbacks(instance) {
             },
             options: [
                 {
-                    type: 'dropdown',
-                    id: 'outputId',
-                    label: 'Output',
+                    type: 'textinput',
+                    id: 'outputName',
+                    label: 'Output Name',
                     default: '',
-                    choices: instance.state?.outputs.map((o) => ({ id: o.id, label: o.name })) ?? [],
                 },
             ],
             callback: (feedback) => {
-                const outputId = feedback.options['outputId'];
-                const output = instance.state?.outputs.find((o) => o.id === outputId);
+                const outputName = feedback.options['outputName'].trim().toLowerCase();
+                const output = instance.state?.outputs.find((o) => o.name.toLowerCase() === outputName);
                 return output?.blanked === true;
             },
         },

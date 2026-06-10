@@ -24,6 +24,7 @@ export interface ShowCastAudio {
 
 export interface ShowCastVideo {
   playing: boolean
+  trackName: string
   positionMs: number
   durationMs: number
 }
