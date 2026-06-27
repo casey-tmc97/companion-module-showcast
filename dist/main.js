@@ -6,13 +6,27 @@ import { getVariableDefinitions, buildVariableValues } from './variables.js';
 class ShowCastInstance extends InstanceBase {
     state = null;
     connection = null;
+    pollTimer = null;
     async init(config, _isFirstInit, _secrets) {
         this.setVariableDefinitions(getVariableDefinitions());
         await this.configUpdated(config, _secrets);
     }
     async destroy() {
+        this._stopPolling();
         this.connection?.destroy();
         this.connection = null;
+    }
+    _startPolling() {
+        this._stopPolling();
+        this.pollTimer = setInterval(() => {
+            this.connection?.sendCommand({ type: 'get_state' });
+        }, 500);
+    }
+    _stopPolling() {
+        if (this.pollTimer !== null) {
+            clearInterval(this.pollTimer);
+            this.pollTimer = null;
+        }
     }
     async configUpdated(config, _secrets) {
         const cfg = config;
@@ -25,6 +39,7 @@ class ShowCastInstance extends InstanceBase {
             this.updateStatus(InstanceStatus.AuthenticationFailure, 'Authentication failed');
         });
         this.connection.on('disconnected', () => {
+            this._stopPolling();
             this.updateStatus(InstanceStatus.Connecting, 'Reconnecting...');
         });
         this.connection.on('commandError', (cmd, message) => {
@@ -40,6 +55,8 @@ class ShowCastInstance extends InstanceBase {
             this.setFeedbackDefinitions(getFeedbacks(this));
             this.checkAllFeedbacks();
             this.updateStatus(InstanceStatus.Ok);
+            if (this.pollTimer === null)
+                this._startPolling();
         });
         this.setActionDefinitions(getActions(this));
         this.setFeedbackDefinitions(getFeedbacks(this));

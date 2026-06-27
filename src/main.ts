@@ -9,6 +9,7 @@ import type { ShowCastConfig, ShowCastState } from './types.js'
 class ShowCastInstance extends InstanceBase {
   state: ShowCastState | null = null
   private connection: ShowCastConnection | null = null
+  private pollTimer: ReturnType<typeof setInterval> | null = null
 
   async init(config: JsonObject, _isFirstInit: boolean, _secrets: unknown): Promise<void> {
     this.setVariableDefinitions(getVariableDefinitions())
@@ -16,8 +17,23 @@ class ShowCastInstance extends InstanceBase {
   }
 
   async destroy(): Promise<void> {
+    this._stopPolling()
     this.connection?.destroy()
     this.connection = null
+  }
+
+  private _startPolling(): void {
+    this._stopPolling()
+    this.pollTimer = setInterval(() => {
+      this.connection?.sendCommand({ type: 'get_state' })
+    }, 500)
+  }
+
+  private _stopPolling(): void {
+    if (this.pollTimer !== null) {
+      clearInterval(this.pollTimer)
+      this.pollTimer = null
+    }
   }
 
   async configUpdated(config: JsonObject, _secrets: unknown): Promise<void> {
@@ -39,6 +55,7 @@ class ShowCastInstance extends InstanceBase {
     })
 
     this.connection.on('disconnected', () => {
+      this._stopPolling()
       this.updateStatus(InstanceStatus.Connecting, 'Reconnecting...')
     })
 
@@ -57,6 +74,7 @@ class ShowCastInstance extends InstanceBase {
       this.setFeedbackDefinitions(getFeedbacks(this))
       this.checkAllFeedbacks()
       this.updateStatus(InstanceStatus.Ok)
+      if (this.pollTimer === null) this._startPolling()
     })
 
     this.setActionDefinitions(getActions(this))
