@@ -12,6 +12,7 @@ export interface ShowCastOutput {
   id: string
   name: string
   blanked: boolean
+  livePage: ShowCastPage | null
 }
 
 export interface ShowCastAudio {

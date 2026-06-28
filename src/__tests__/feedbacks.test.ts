@@ -7,7 +7,7 @@ function makeState(overrides: Partial<ShowCastState> = {}): ShowCastState {
     rundown: { pos: 0, total: 0, currentName: '' },
     audio: { playing: false, trackName: '', positionMs: 0, durationMs: 0, playlists: [] },
     video: { playing: false, trackName: '', positionMs: 0, durationMs: 0 },
-    outputs: [{ id: 'out-1', name: 'Main', blanked: false }],
+    outputs: [{ id: 'out-1', name: 'Main', blanked: false, livePage: null }],
     selectedOutputName: '',
     ...overrides,
   }
@@ -104,5 +104,44 @@ describe('getFeedbacks', () => {
 
   test('output_is_blanked: false when state is null', () => {
     expect(evalFeedback(getFeedbacks(makeInstance(null)), 'output_is_blanked', { outputName: 'Main' })).toBe(false)
+  })
+
+  test('page_live_on_output: true when output matches and livePage UUID matches', () => {
+    const state = makeState({
+      outputs: [{ id: 'out-1', name: 'Main', blanked: false, livePage: { id: 'abc-123', name: 'Slide 1' } }],
+    })
+    expect(evalFeedback(getFeedbacks(makeInstance(state)), 'page_live_on_output', { outputId: 'out-1', pageId: 'abc-123' })).toBe(true)
+  })
+
+  test('page_live_on_output: true with case-insensitive UUID match', () => {
+    const state = makeState({
+      outputs: [{ id: 'out-1', name: 'Main', blanked: false, livePage: { id: 'ABC-123', name: 'Slide 1' } }],
+    })
+    expect(evalFeedback(getFeedbacks(makeInstance(state)), 'page_live_on_output', { outputId: 'out-1', pageId: 'abc-123' })).toBe(true)
+  })
+
+  test('page_live_on_output: false when livePage is null (nothing live)', () => {
+    const state = makeState({
+      outputs: [{ id: 'out-1', name: 'Main', blanked: false, livePage: null }],
+    })
+    expect(evalFeedback(getFeedbacks(makeInstance(state)), 'page_live_on_output', { outputId: 'out-1', pageId: 'abc-123' })).toBe(false)
+  })
+
+  test('page_live_on_output: false when UUID does not match', () => {
+    const state = makeState({
+      outputs: [{ id: 'out-1', name: 'Main', blanked: false, livePage: { id: 'abc-123', name: 'Slide 1' } }],
+    })
+    expect(evalFeedback(getFeedbacks(makeInstance(state)), 'page_live_on_output', { outputId: 'out-1', pageId: 'xyz-999' })).toBe(false)
+  })
+
+  test('page_live_on_output: false when output ID does not match any output', () => {
+    const state = makeState({
+      outputs: [{ id: 'out-1', name: 'Main', blanked: false, livePage: { id: 'abc-123', name: 'Slide 1' } }],
+    })
+    expect(evalFeedback(getFeedbacks(makeInstance(state)), 'page_live_on_output', { outputId: 'out-9', pageId: 'abc-123' })).toBe(false)
+  })
+
+  test('page_live_on_output: false when state is null', () => {
+    expect(evalFeedback(getFeedbacks(makeInstance(null)), 'page_live_on_output', { outputId: 'out-1', pageId: 'abc-123' })).toBe(false)
   })
 })

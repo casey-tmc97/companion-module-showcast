@@ -6,6 +6,8 @@ interface FeedbackInstance {
 }
 
 export function getFeedbacks(instance: FeedbackInstance): CompanionFeedbackDefinitions {
+  const outputChoices = instance.state?.outputs.map((o) => ({ id: o.id, label: o.name })) ?? []
+
   return {
     page_is_live: {
       type: 'boolean',
@@ -65,6 +67,38 @@ export function getFeedbacks(instance: FeedbackInstance): CompanionFeedbackDefin
       },
       options: [],
       callback: () => instance.state?.video.playing === true,
+    },
+
+    page_live_on_output: {
+      type: 'boolean',
+      name: 'Page Live on Output',
+      description: 'Active when the specified page UUID is currently live on the selected output',
+      defaultStyle: {
+        bgcolor: combineRgb(0, 180, 0),
+        color: combineRgb(255, 255, 255),
+      },
+      options: [
+        {
+          type: 'dropdown',
+          id: 'outputId',
+          label: 'Output',
+          default: '',
+          choices: outputChoices,
+        },
+        {
+          type: 'textinput',
+          id: 'pageId',
+          label: 'Page UUID',
+          default: '',
+        },
+      ],
+      callback: (feedback) => {
+        const outputId = feedback.options['outputId'] as string
+        const pageId = (feedback.options['pageId'] as string).trim().toLowerCase()
+        const output = instance.state?.outputs.find((o) => o.id === outputId)
+        if (!output?.livePage) return false
+        return output.livePage.id.toLowerCase() === pageId
+      },
     },
 
     output_is_blanked: {
