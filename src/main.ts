@@ -45,9 +45,14 @@ class ShowCastInstance extends InstanceBase {
       cfg.port ?? 5100,
       cfg.password ?? '',
     )
+    this.connection.debugLog = (msg) => this.log('info', msg)
 
     this.connection.on('connected', () => {
       this.updateStatus(InstanceStatus.Connecting, 'Authenticating...')
+    })
+
+    this.connection.on('authOk', () => {
+      this._startPolling()
     })
 
     this.connection.on('authFailed', () => {
@@ -74,7 +79,6 @@ class ShowCastInstance extends InstanceBase {
       this.setFeedbackDefinitions(getFeedbacks(this))
       this.checkAllFeedbacks()
       this.updateStatus(InstanceStatus.Ok)
-      if (this.pollTimer === null) this._startPolling()
     })
 
     this.setActionDefinitions(getActions(this))

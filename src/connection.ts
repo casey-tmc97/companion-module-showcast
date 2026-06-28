@@ -9,6 +9,7 @@ export class ShowCastConnection extends EventEmitter {
   private reconnectDelay = 1000
   private readonly MAX_RECONNECT_DELAY = 5000
   private _destroyed = false
+  debugLog: ((msg: string) => void) | null = null
 
   constructor(
     private readonly host: string,
@@ -72,14 +73,31 @@ export class ShowCastConnection extends EventEmitter {
   }
 
   private _processLine(line: string): void {
+    // Strip UTF-8 BOM if present (server prepends it to the stream)
+    const stripped = line.charCodeAt(0) === 0xFEFF ? line.slice(1) : line
     let msg: { type: string }
     try {
-      msg = JSON.parse(line)
+      msg = JSON.parse(stripped)
     } catch {
+      this.debugLog?.(`[SC] unparseable line: ${line.slice(0, 200)}`)
       return
     }
 
-    if (msg.type === 'auth_fail') {
+    if (msg.type === 'state') {
+      const s = msg as unknown as Record<string, unknown>
+      const audio = s['audio'] as Record<string, unknown> | undefined
+      const page = s['page'] as Record<string, unknown> | null | undefined
+      this.debugLog?.(
+        `[SC] state: page=${JSON.stringify(page?.['name'] ?? null)} audio.playing=${audio?.['playing']} audio.pos=${audio?.['positionMs']} audio.track=${JSON.stringify(audio?.['trackName'] ?? null)}`
+      )
+    } else {
+      this.debugLog?.(`[SC] recv type=${msg.type} keys=${Object.keys(msg).join(',')}`)
+    }
+
+    if (msg.type === 'auth_ok') {
+      this.emit('authOk')
+      this.sendCommand({ type: 'get_state' })
+    } else if (msg.type === 'auth_fail') {
       this.emit('authFailed')
       this.destroy()
     } else if (msg.type === 'state') {
@@ -91,6 +109,8 @@ export class ShowCastConnection extends EventEmitter {
       } else {
         this.emit('commandOk', ack.cmd)
       }
+    } else {
+      this.debugLog?.(`[SC] unhandled type: ${JSON.stringify(msg).slice(0, 300)}`)
     }
   }
 

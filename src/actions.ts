@@ -142,6 +142,20 @@ export function getActions(instance: ActionInstance): CompanionActionDefinitions
         instance.sendCommand({ type: 'output_unblank', outputId: action.options['outputId'] as string }),
     },
 
+    scheduler_start: {
+      name: 'Scheduler: Start',
+      description: 'Arms the ShowCast scheduler so it fires the next scheduled event automatically.',
+      options: [],
+      callback: async () => instance.sendCommand({ type: 'scheduler_start' }),
+    },
+
+    scheduler_stop: {
+      name: 'Scheduler: Stop',
+      description: 'Disarms the ShowCast scheduler, preventing any pending scheduled events from firing.',
+      options: [],
+      callback: async () => instance.sendCommand({ type: 'scheduler_stop' }),
+    },
+
     get_state: {
       name: 'Refresh State',
       description: 'Manually requests a fresh state snapshot from ShowCast. State is normally pushed automatically — use this as a diagnostic fallback if variables or feedbacks appear stale.',

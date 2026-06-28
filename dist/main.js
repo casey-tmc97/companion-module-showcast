@@ -32,8 +32,12 @@ class ShowCastInstance extends InstanceBase {
         const cfg = config;
         this.connection?.destroy();
         this.connection = new ShowCastConnection(cfg.host ?? '127.0.0.1', cfg.port ?? 5100, cfg.password ?? '');
+        this.connection.debugLog = (msg) => this.log('info', msg);
         this.connection.on('connected', () => {
             this.updateStatus(InstanceStatus.Connecting, 'Authenticating...');
+        });
+        this.connection.on('authOk', () => {
+            this._startPolling();
         });
         this.connection.on('authFailed', () => {
             this.updateStatus(InstanceStatus.AuthenticationFailure, 'Authentication failed');
@@ -55,8 +59,6 @@ class ShowCastInstance extends InstanceBase {
             this.setFeedbackDefinitions(getFeedbacks(this));
             this.checkAllFeedbacks();
             this.updateStatus(InstanceStatus.Ok);
-            if (this.pollTimer === null)
-                this._startPolling();
         });
         this.setActionDefinitions(getActions(this));
         this.setFeedbackDefinitions(getFeedbacks(this));
