@@ -16,6 +16,9 @@ export function getVariableDefinitions() {
         video_duration: { name: 'Video Duration (M:SS)' },
         video_remaining: { name: 'Video Remaining (M:SS)' },
         selected_output_name: { name: 'Selected Output Name' },
+        page_timer_active: { name: 'Page Go-To-Next Timer Active (true/false)' },
+        page_timer_remaining: { name: 'Page Go-To-Next Timer Remaining (M:SS)' },
+        page_timer_duration: { name: 'Page Go-To-Next Timer Duration (M:SS)' },
     };
 }
 function fmtMs(ms) {
@@ -44,5 +47,8 @@ export function buildVariableValues(state) {
         video_duration: fmtMs(state.video.durationMs),
         video_remaining: fmtMs(videoRemMs),
         selected_output_name: state.selectedOutputName,
+        page_timer_active: String(state.pageTimer.active),
+        page_timer_remaining: fmtMs(state.pageTimer.remainingMs),
+        page_timer_duration: fmtMs(state.pageTimer.durationMs),
     };
 }
