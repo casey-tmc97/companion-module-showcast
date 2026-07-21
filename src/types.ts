@@ -36,6 +36,12 @@ export interface ShowCastRundown {
   currentName: string
 }
 
+export interface ShowCastPageTimer {
+  active: boolean
+  remainingMs: number
+  durationMs: number
+}
+
 export interface ShowCastState {
   page: ShowCastPage | null
   rundown: ShowCastRundown
@@ -43,6 +49,7 @@ export interface ShowCastState {
   video: ShowCastVideo
   outputs: ShowCastOutput[]
   selectedOutputName: string
+  pageTimer: ShowCastPageTimer
 }
 
 export interface ShowCastConfig {

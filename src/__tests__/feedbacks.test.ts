@@ -9,6 +9,7 @@ function makeState(overrides: Partial<ShowCastState> = {}): ShowCastState {
     video: { playing: false, trackName: '', positionMs: 0, durationMs: 0 },
     outputs: [{ id: 'out-1', name: 'Main', blanked: false, livePage: null }],
     selectedOutputName: '',
+    pageTimer: { active: false, remainingMs: 0, durationMs: 0 },
     ...overrides,
   }
 }

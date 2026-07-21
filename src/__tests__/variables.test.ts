@@ -9,6 +9,7 @@ function makeState(overrides: Partial<ShowCastState> = {}): ShowCastState {
     video: { playing: false, trackName: '', positionMs: 0, durationMs: 0 },
     outputs: [],
     selectedOutputName: '',
+    pageTimer: { active: false, remainingMs: 0, durationMs: 0 },
     ...overrides,
   }
 }
@@ -22,8 +23,9 @@ describe('getVariableDefinitions', () => {
       'audio_track_name', 'audio_playing', 'audio_position', 'audio_duration', 'audio_remaining',
       'video_track_name', 'video_playing', 'video_position', 'video_duration', 'video_remaining',
       'selected_output_name',
+      'page_timer_active', 'page_timer_remaining', 'page_timer_duration',
     ]))
-    expect(ids).toHaveLength(16)
+    expect(ids).toHaveLength(19)
   })
 })
 
@@ -110,5 +112,17 @@ describe('buildVariableValues', () => {
   test('selected_output_name matches state', () => {
     const state = makeState({ selectedOutputName: 'Main Output' })
     expect(buildVariableValues(state).selected_output_name).toBe('Main Output')
+  })
+
+  test('page_timer_active is "false" when inactive', () => {
+    expect(buildVariableValues(makeState()).page_timer_active).toBe('false')
+  })
+
+  test('page_timer_active is "true" and remaining/duration format M:SS when active', () => {
+    const state = makeState({ pageTimer: { active: true, remainingMs: 4200, durationMs: 5000 } })
+    const vars = buildVariableValues(state)
+    expect(vars.page_timer_active).toBe('true')
+    expect(vars.page_timer_remaining).toBe('0:04')
+    expect(vars.page_timer_duration).toBe('0:05')
   })
 })
